@@ -109,3 +109,14 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+@media (min-width: 900px) {
+  .app-shell {
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    box-shadow: 0 0 40px rgba(0,0,0,0.15);
+  }
+  body {
+    background: #e8e8e8;
+  }
+}
