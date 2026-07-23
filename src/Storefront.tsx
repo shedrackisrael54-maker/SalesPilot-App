@@ -8,7 +8,7 @@ import {
   Shirt, Footprints, Watch, Sofa, Smartphone, Baby, HeartPulse, Tag, Plus, Minus, Phone, MapPin, Lock, Package, Clock, AlertCircle,
 } from 'lucide-react';
 import { NAIRA, THEME_NICHES, ProductIcon, isValidCSSColor, isColorOptionGroup, getTieredPrice, NIGERIAN_STATES, PAYSTACK_PUBLIC_KEY } from './shared';
-import type { StoreTheme, Product, Review, Order, OrderItem, Bundle } from './shared';
+import type { StoreTheme, Product, Review, Order, OrderItem, Bundle, Courier } from './shared';
 
 type MerchantInfo = {
   uid: string;
@@ -28,6 +28,7 @@ type MerchantInfo = {
   cartTimerMinutes?: number;
   shippingRates?: { [state: string]: number };
   defaultShippingFee?: number;
+  couriers?: Courier[];
   plan?: string;
   trialStart?: string;
   subscriptionExpiresAt?: string;
@@ -663,6 +664,7 @@ export function CheckoutScreen() {
   const [deliveryState, setDeliveryState] = useState('');
   const [deliveryCity, setDeliveryCity] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [selectedCourierId, setSelectedCourierId] = useState<string | null>(null);
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{ id: string; code: string; type: 'percent' | 'fixed'; value: number } | null>(null);
   const [couponError, setCouponError] = useState('');
@@ -716,7 +718,11 @@ export function CheckoutScreen() {
       : Math.min(appliedCoupon.value, subtotal)
     : 0;
   const total = subtotal - discount;
-  const shippingFee = deliveryState ? (merchant.shippingRates?.[deliveryState] ?? merchant.defaultShippingFee ?? 0) : 0;
+  const activeCouriers = (merchant.couriers || []).filter(c => c.active);
+  const selectedCourier = activeCouriers.find(c => c.id === selectedCourierId) || null;
+  const shippingFee = activeCouriers.length > 0
+    ? (selectedCourier ? selectedCourier.customerPrice : 0)
+    : (deliveryState ? (merchant.shippingRates?.[deliveryState] ?? merchant.defaultShippingFee ?? 0) : 0);
   const grandTotal = total + shippingFee;
 
   const handleApplyCoupon = async () => {
@@ -763,6 +769,7 @@ export function CheckoutScreen() {
       discount,
       ...(appliedCoupon?.code ? { couponCode: appliedCoupon.code } : {}),
       shippingFee,
+      ...(selectedCourier ? { courierName: selectedCourier.name } : {}),
       total: grandTotal,
       paymentMethod,
       status: paymentMethod === 'Paystack' ? 'Completed' : 'Pending',
@@ -790,6 +797,7 @@ export function CheckoutScreen() {
     if (!customerName.trim()) { setFormError('Please enter your name.'); return; }
     if (!customerEmail.trim() || !customerEmail.includes('@')) { setFormError('Please enter a valid email.'); return; }
     if (!deliveryState.trim() || !deliveryCity.trim() || !deliveryAddress.trim()) { setFormError('Please enter your full delivery address, including state, so the seller knows where to send your order.'); return; }
+    if (activeCouriers.length > 0 && !selectedCourier) { setFormError('Please choose a delivery courier.'); return; }
     if (cart.length === 0) { setFormError('Your cart is empty.'); return; }
     if (!paystackReady) { setFormError('Payment is still loading - please wait a moment and try again.'); return; }
 
@@ -953,8 +961,16 @@ export function CheckoutScreen() {
                 </div>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 13, color: '#6B7280' }}>{deliveryState ? `Delivery to ${deliveryState}` : 'Delivery'}</span>
-                <span style={{ fontSize: 13, color: '#111827', fontWeight: 600 }}>{deliveryState ? (shippingFee > 0 ? `${NAIRA}${shippingFee.toLocaleString()}` : 'Free') : 'Select state'}</span>
+                <span style={{ fontSize: 13, color: '#6B7280' }}>
+                  {activeCouriers.length > 0
+                    ? (selectedCourier ? `Delivery via ${selectedCourier.name}` : 'Delivery')
+                    : (deliveryState ? `Delivery to ${deliveryState}` : 'Delivery')}
+                </span>
+                <span style={{ fontSize: 13, color: '#111827', fontWeight: 600 }}>
+                  {activeCouriers.length > 0
+                    ? (selectedCourier ? `${NAIRA}${shippingFee.toLocaleString()}` : 'Select courier')
+                    : (deliveryState ? (shippingFee > 0 ? `${NAIRA}${shippingFee.toLocaleString()}` : 'Free') : 'Select state')}
+                </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid #E5E7EB' }}>
                 <span style={{ fontSize: 15, color: '#111827', fontWeight: 800 }}>Total</span>
@@ -984,6 +1000,31 @@ export function CheckoutScreen() {
               </div>
               <textarea style={{ width: '100%', padding: '12px 14px', borderRadius: 11, border: '1px solid #E5E7EB', fontSize: 13.5, outline: 'none', minHeight: 68, resize: 'vertical' as const, fontFamily: 'inherit', boxSizing: 'border-box' as const }} placeholder="Full address - street, house number, landmark" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} />
             </div>
+
+            {activeCouriers.length > 0 && (
+              <div style={{ marginBottom: 20 }}>
+                <p style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 4 }}>Choose a delivery courier</p>
+                <p style={{ fontSize: 11.5, color: '#9CA3AF', marginBottom: 12 }}>Pick how you'd like your order delivered.</p>
+                {activeCouriers.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCourierId(c.id)}
+                    style={{
+                      width: '100%', textAlign: 'left' as const, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: selectedCourierId === c.id ? `${theme.primary}0d` : '#fff',
+                      border: `1.5px solid ${selectedCourierId === c.id ? theme.primary : '#E5E7EB'}`,
+                      borderRadius: 12, padding: '12px 14px', marginBottom: 8, cursor: 'pointer',
+                    }}
+                  >
+                    <div>
+                      <p style={{ fontSize: 13.5, fontWeight: 700, color: '#111827' }}>{c.name}</p>
+                      {c.estimatedDays && <p style={{ fontSize: 11.5, color: '#9CA3AF', marginTop: 2 }}>{c.estimatedDays}</p>}
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: theme.primary }}>{NAIRA}{c.customerPrice.toLocaleString()}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {formError && <p style={{ color: '#EF4444', fontSize: 12.5, marginBottom: 14 }}>{formError}</p>}
 
