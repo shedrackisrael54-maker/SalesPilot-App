@@ -320,6 +320,17 @@ export type Courier = {
   active: boolean;
 };
 
+// SalesPilot's own cut of every delivery fee, on top of whatever the merchant sets as their
+// customer-facing courier price - added transparently into the one price the customer sees,
+// the same way SalesPilot already takes a percentage of every storefront order.
+export const PLATFORM_COURIER_FEE_RATE = 0.04;
+
+// Given a courier's merchant-set price, returns the actual final price the customer is charged,
+// with SalesPilot's own cut already folded in - so there's only ever one number shown anywhere.
+export function getCourierCustomerPrice(courier: Courier): number {
+  return Math.round(courier.customerPrice * (1 + PLATFORM_COURIER_FEE_RATE));
+}
+
 // Given a product's normal price, its wholesale/tiered pricing rules (if any), and the quantity
 // being bought, returns the correct per-unit price to charge - the highest-quantity tier the
 // order qualifies for. Falls back to the normal price if no tiers apply.
