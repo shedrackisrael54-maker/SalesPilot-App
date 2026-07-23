@@ -290,6 +290,7 @@ export type Order = {
   discount: number;
   couponCode?: string;
   shippingFee: number;
+  courierName?: string;
   total: number;
   paymentMethod: 'Paystack' | 'WhatsApp';
   status: 'Pending' | 'Processing' | 'Completed' | 'Cancelled';
@@ -304,6 +305,19 @@ export type Bundle = {
   bundlePrice: number;
   active: boolean;
   createdAt: string;
+};
+
+// A merchant-defined delivery option shown to customers at checkout. costPrice is what the
+// merchant actually pays the courier (for their own records/margin tracking); customerPrice is
+// what the customer actually gets charged - the merchant can build in a margin between the two,
+// the same way SalesPilot itself takes a cut of storefront payments.
+export type Courier = {
+  id: string;
+  name: string;
+  costPrice: number;
+  customerPrice: number;
+  estimatedDays?: string;
+  active: boolean;
 };
 
 // Given a product's normal price, its wholesale/tiered pricing rules (if any), and the quantity
