@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/xd2hkwf8/image/upload/w_64,h_64,c_fit,f_auto/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png" />
+    <link rel="apple-touch-icon" href="https://res.cloudinary.com/xd2hkwf8/image/upload/w_180,h_180,c_fit,f_auto/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#142A45" />
+
+    <title>SalesPilot - Sell online and in person</title>
+    <meta name="description" content="A real online store for Nigerian sellers. Sell online and in person from one place, track your stock and profit, and get paid straight into your own bank account. No platform fees." />
+
+    <!-- Open Graph tags. These are what WhatsApp, Facebook and Instagram read when someone
+         shares a link, so a shared store link shows a proper title, description and image
+         instead of a bare URL - which matters a lot when most sharing here happens in chat. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SalesPilot" />
+    <meta property="og:title" content="SalesPilot - Sell online and in person" />
+    <meta property="og:description" content="A real online store for Nigerian sellers. Sell online and in person, track your stock and profit, and get paid straight into your own bank account." />
+    <meta property="og:image" content="https://res.cloudinary.com/xd2hkwf8/image/upload/w_1200,h_630,c_pad,b_white,f_auto/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png" />
+    <meta property="og:url" content="https://salespilot.com.ng" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SalesPilot - Sell online and in person" />
+    <meta name="twitter:description" content="A real online store for Nigerian sellers. Sell online and in person, track your stock and profit, and get paid straight into your own bank account." />
+    <meta name="twitter:image" content="https://res.cloudinary.com/xd2hkwf8/image/upload/w_1200,h_630,c_pad,b_white,f_auto/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Errors are logged to the console for debugging but never shown to the person using the
+         site. A shopper who hits a minor script error should still see the shop, not a wall of
+         red code - so nothing here touches the page. Open the browser console to read them. -->
+    <script>
+      window.addEventListener('error', function (e) {
+        console.error('[SalesPilot]', e.message, e.filename + ':' + e.lineno + ':' + e.colno);
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        console.error('[SalesPilot] Unhandled promise:', e.reason?.message || e.reason);
+      });
+    </script>
+  </body>
+</html>
