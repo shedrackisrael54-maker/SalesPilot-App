@@ -5,7 +5,11 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDw4X0KRGxIfWgfamIAgxSmkbktSzPSCg4',
-  authDomain: 'salespilot-200e5.firebaseapp.com',
+  // Using our own subdomain instead of the default *.firebaseapp.com address. The default
+  // domain has been intermittently unreachable (ERR_CONNECTION_REFUSED) for Google sign-in
+  // and password reset links, and routing through our own domain also looks more trustworthy
+  // to anyone who notices the URL during sign-in.
+  authDomain: 'auth.salespilot.com.ng',
   projectId: 'salespilot-200e5',
   storageBucket: 'salespilot-200e5.firebasestorage.app',
   messagingSenderId: '474948499696',
