@@ -20,14 +20,16 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 // Fires when a notification arrives while the app is closed or in the background - this is
-// what actually puts it into the phone's real notification tray. Uses the real SalesPilot logo
-// instead of a placeholder icon file, so the notification looks properly branded.
+// what actually puts it into the phone's real notification tray. Uses the same logo as
+// everywhere else in the app (splash screen, favicon, foreground notifications) - this file
+// previously had its own separate, older icon hardcoded here, which is why the notification
+// tray was showing a different logo than every other part of the app.
 messaging.onBackgroundMessage((payload) => {
   const title = payload.notification?.title || 'SalesPilot';
   const options = {
     body: payload.notification?.body || '',
-    icon: 'https://res.cloudinary.com/xd2hkwf8/image/upload/v1785081841/file_000000005e2881f4841543bd71eb19e7_gro1km.png',
-    badge: 'https://res.cloudinary.com/xd2hkwf8/image/upload/v1785081841/file_000000005e2881f4841543bd71eb19e7_gro1km.png',
+    icon: 'https://res.cloudinary.com/xd2hkwf8/image/upload/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png',
+    badge: 'https://res.cloudinary.com/xd2hkwf8/image/upload/v1786216032/file_000000009728820ca7a1c61dbadc5015_eppnpd.png',
   };
   self.registration.showNotification(title, options);
 });
