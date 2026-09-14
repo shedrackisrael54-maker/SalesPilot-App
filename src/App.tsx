@@ -7052,40 +7052,15 @@ function Signup() {
       return;
     }
     setSendingCode(true);
-    const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const emailKey = form.email.trim().toLowerCase();
-    try {
-      await setDoc(doc(db, 'emailVerifications', emailKey), {
-        code: generatedCode,
-        expiresAt: Date.now() + 10 * 60 * 1000,
-      });
-    } catch (err: any) {
-      setError('Something went wrong. Please try again.');
-      setSendingCode(false);
-      return;
+    if (referralInput.trim()) {
+      try { sessionStorage.setItem('sp_referral_code', referralInput.trim()); } catch {}
     }
     try {
-      const res = await fetch('https://sales-pilot-payment.vercel.app/api/send-verification-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailKey, code: generatedCode, name: form.name }),
-      });
-      if (!res.ok) {
-        let detail = '';
-        try { const body = await res.json(); detail = extractErrorMessage(body); } catch {}
-        if (detail.toLowerCase().includes('invalid') && detail.toLowerCase().includes('email')) {
-          setError('Please check your email address and try again.');
-        } else {
-          setError("We couldn't send your verification email right now. Please try again in a moment.");
-        }
-        setSendingCode(false);
-        return;
-      }
-      setStep('verify');
-      setResendCooldown(30);
-      trackEmailSent();
+      await signup(form.email, form.password, form.name);
     } catch (err: any) {
-      setError('Please check your internet connection and try again.');
+      if (err.code === 'auth/email-already-in-use') setError('That email is already registered. Try signing in instead.');
+      else if (err.code === 'auth/invalid-email') setError('Please enter a valid email address.');
+      else setError('Something went wrong. Please try again.');
     } finally {
       setSendingCode(false);
     }
