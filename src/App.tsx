@@ -9322,7 +9322,7 @@ function OwnerDashboardScreen({ onBack }: { onBack: () => void }) {
         <div style={{ background: C.white, borderRadius: '24px 24px 0 0', marginTop: -16, padding: 20, paddingBottom: 100 }}>
           <div style={{ marginBottom: 20 }}>
             <p style={{ fontSize: 12, color: C.gray, marginBottom: 2 }}>Email</p>
-            <p style={{ fontSize: 14, fontWeight: 600, color: C.dark, marginBottom: 12 }}>{selectedMerchant.email || '-'}</p>
+            <p style={{ fontSize: 14, fontWeight: 600, color: C.dark, marginBottom: 12 }}>{selectedMerchant.email || '-'}</p><p style={{ fontSize: 14, fontWeight: 600, color: C.dark, marginBottom: 12 }}>WhatsApp: {selectedMerchant.contactWhatsapp || 'Not provided'}</p>
             <p style={{ fontSize: 12, color: C.gray, marginBottom: 2 }}>Status</p>
             <p style={{ fontSize: 14, fontWeight: 600, color: isPaying ? C.green : C.orange, marginBottom: 12 }}>
               {isPaying ? `${selectedMerchant.plan === 'pro' ? 'Growth' : 'Starter'} active until ${new Date(selectedMerchant.subscriptionExpiresAt).toLocaleDateString()}` : 'On free trial / not paying'}
@@ -9641,7 +9641,7 @@ function OwnerDashboardScreen({ onBack }: { onBack: () => void }) {
                 <div key={m.uid} onClick={() => setSelectedMerchant(m)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 10px', borderBottom: i < filteredMerchants.length - 1 ? `1px solid ${C.border}` : 'none', cursor: 'pointer' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 13.5, fontWeight: 700, color: C.dark }}>{m.storeName || m.name || 'Unnamed'}</p>
-                    <p style={{ fontSize: 11.5, color: C.gray }}>{m.email || '-'}</p>
+                    <p style={{ fontSize: 11.5, color: C.gray }}>{m.email || '-'}{m.contactWhatsapp ? ` · ${m.contactWhatsapp}` : ''}</p>
                   </div>
                   <span style={{ fontSize: 10.5, fontWeight: 700, padding: '3px 9px', borderRadius: 20, background: paying ? C.greenLight : C.orangeLight, color: paying ? C.green : C.orange, flexShrink: 0 }}>
                     {paying ? (m.plan === 'pro' ? 'Growth' : 'Starter') : 'Trial'}
